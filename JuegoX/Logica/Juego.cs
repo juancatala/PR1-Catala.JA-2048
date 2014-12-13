@@ -8,20 +8,58 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
 {
     public class ModeloJuego
     {
-        
+        // Esta matriz almacena los valores del tablero de juego
         static int[,] matriu = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+        // En esta matriz se copian los valores del tablero de juego para comprovar los proximos movimientos
         static int[,] matriu2 = { { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
+        // El metodo Reiniciar sirve para saber si el jugador quiere jugar otra partida
+        public static bool Reiniciar()
+        {
+            Console.WriteLine("Quieres jugar otra partida: S/N");
+            bool bucle=true;
+            bool reinicio=false;
+            while (bucle)
+            {
+                ConsoleKeyInfo respuesta;
+                respuesta = Console.ReadKey(true);
+                switch (respuesta.Key)
+                {
+                    case ConsoleKey.S: ReiniciarMatriz();
+                        reinicio = true;
+                        bucle = false;
+                        break;
+                    case ConsoleKey.N: bucle = false;
+                        break;
+                    default: Console.WriteLine("No es una tecla adecuada. Use S o N.");
+                        break;
+                }
+            }
+            return reinicio;
+        }
+        // El metodo ReiniciarMatriz sirve para poner la matriz del tablero a 0 si el jugador quiere jugar otra partida
+        public static void ReiniciarMatriz()
+        {
+            for (int a = 0; a <= 3; a++)
+            {
+                for (int b = 0; b <= 3; b++)
+                {
+                    matriu[a, b] = 0;
+                }
+            }
+        }
+        // La variable alea da valor a las posiciones aleatorias y al valor de las casillas añadidas cada turno
         static Random alea = new Random();
+        // El metodo Anadir sirve para poner las casillas añadidas por turno al tablero
+        // Se llama Anadir con N para evitar posibles errores con la letra Ñ
         public static void Anadir(int cont) 
         {
-             
-            
-            
+            //El primer bucle es el numero de casillas añadidas necesarias, 2 para empezar y 1 por turno
             while (cont > 0)
             {
                 int val = 0;
                 int cont2 = 0;
                 int cont3 = 0;
+                //El segundo busca una posicion aleatoria diez veces, en caso de no encontrarla salta al 3 bucle
                 for (cont2 = 0; cont2 < 10; cont2++)
                 {
                     int pos1 = alea.Next(0, 3);
@@ -45,10 +83,12 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                         }
                     }
                 }
+                //Comprovacion de que el bucle 2 no a cumplido su función
                 if (cont2 == 10)
                 {
                     int i = 0;
                     int j = 0;
+                    //El tercer bucle recorre la matriz para encontrar un hueco donde añadir la casilla
                     for (i = 0; i <= 3; i++)
                     {
                         for (j = 0; j <= 3; j++)
@@ -65,10 +105,14 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                         matriu[i, j] = 2;
                         cont--;
                     }
+                    //Ultimo caso, el bucle recorre la matriz y no encuentra huecos
+                    //Nunca deberia ocurrir, puesto que las sumas producen huecos y si no hay sumas pierdes
                     else if (cont3 == 16) break;
                 }
             }
         }
+        //El metodo Mostrar muestra la matriz, coloreando las casillas dependiendo de su valor
+        //Tambien lleva la puntuación, que se recalcula cada turno despues de mostrar la matriz
         public static bool Mostrar()
         {
             bool resultado = false;
@@ -134,6 +178,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             Console.WriteLine("Puntuacion: {0}",puntuacion);
             return resultado;
         }
+        //El metodo Dirección identifica la dirección en la que el jugador quiere sumar
         public static void Direccion(ConsoleKeyInfo dirc)
         {
             switch (dirc.Key)
@@ -151,6 +196,8 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
             
         }
+        //Despues de sumar, los valores se copian en la segunda matriz y se suman en todas direcciones para saber si existen mas movimientos
+        //El metodo cuenta los intentos fallidos de sumar en cada dirección, si no se a podido sumar nada no existen mas movimientos
         public static bool BuscarSumas()
         {
             bool perder = false;
@@ -165,6 +212,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                }
                return perder;
         }
+        //Metodo para sumar hacia arriba
         public static void Arriba()
         {
             for (int j = 0; j < 4; j++)
@@ -189,6 +237,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                 OrganizarArriba(j);     
             }
         }
+        //Metodo para organizar los valores al sumar hacia arriba
         public static void OrganizarArriba(int j)
         {
                 for (int x = 1; x < 4; x++)
@@ -204,6 +253,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                 }
             
         }
+        //Metodo para sumar hacia abajo
         public static void Abajo()
         {
             for (int j = 0; j < 4; j++)
@@ -228,7 +278,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                 OrganizarAbajo(j);
             }
         }
-
+        //Metodo para organizar los valores al sumar hacia abajo
         public static void OrganizarAbajo(int j)
         {
             for (int x = 2; x >= 0; x--)
@@ -244,6 +294,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
 
         }
+        //Metodo para sumar hacia la izquierda
         public static void Izquierda()
         {
             for (int i = 0; i < 4; i++)
@@ -268,6 +319,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                 OrganizarIzquierda(i);
             }
         }
+        //Metodo para organizar los valores al sumar hacia la izquierda
         public static void OrganizarIzquierda(int i)
         {
             for (int x = 1; x < 4; x++)
@@ -283,6 +335,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
 
         }
+        //Metodo para sumar hacia la derecha
         public static void Derecha()
         {
             for (int i = 0; i < 4; i++)
@@ -307,6 +360,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
                 OrganizarDerecha(i);
             }
         }
+        //Metodo para organizar los valores al sumar hacia la derecha
         public static void OrganizarDerecha(int i)
         {
             for (int x = 2; x >= 0; x--)
@@ -322,6 +376,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
 
         }
+        //Metodo para buscar si quedan sumas hacia arriba
         public static int ArribaBuscar()
         {
             int cont=0;
@@ -354,6 +409,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
             return cont;
         }
+        //Metodo para organizar la matriz al buscar si quedan sumas hacia arriba
         public static void OrganizarArribaBuscar(int j)
         {
             for (int x = 1; x < 4; x++)
@@ -369,6 +425,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
 
         }
+        //Metodo para buscar si quedan sumas hacia abajo
         public static int AbajoBuscar()
         {
             int cont = 0;
@@ -402,7 +459,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
             return cont;
         }
-
+        //Metodo para organizar la matriz al buscar si quedan sumas hacia abajo
         public static void OrganizarAbajoBuscar(int j)
         {
             for (int x = 2; x >= 0; x--)
@@ -418,6 +475,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
 
         }
+        //Metodo para buscar si quedan sumas hacia la izquierda
         public static int IzquierdaBuscar()
         {
             int cont = 0;
@@ -451,6 +509,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
             return cont;
         }
+        //Metodo para organizar la matriz al buscar si quedan sumas hacia la izquierda
         public static void OrganizarIzquierdaBuscar(int i)
         {
             for (int x = 1; x < 4; x++)
@@ -466,6 +525,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
 
         }
+        //Metodo para buscar si quedan sumas hacia la derecha
         public static int DerechaBuscar()
         {
             int cont = 0;
@@ -499,6 +559,7 @@ namespace JuanC.Programacion.Eval1.Juego.Logica
             }
             return cont;
         }
+        //Metodo para organizar la matriz al buscar si quedan sumas hacia la derecha
         public static void OrganizarDerechaBuscar(int i)
         {
             for (int x = 2; x >= 0; x--)
